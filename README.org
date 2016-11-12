@@ -1,0 +1,66 @@
+#+TITLE: Unwrap
+#+AUTHOR: Stefanos Carlström
+#+EMAIL: stefanos.carlstrom@gmail.com
+
+[[https://travis-ci.org/jagot/Unwrap.jl][https://travis-ci.org/jagot/Unwrap.jl.svg?branch=master]]
+[[https://coveralls.io/github/jagot/Unwrap.jl?branch=master][https://coveralls.io/repos/jagot/Unwrap.jl/badge.svg?branch=master&service=github]]
+[[http://codecov.io/github/jagot/Unwrap.jl?branch=master][http://codecov.io/github/jagot/Unwrap.jl/coverage.svg?branch=master]]
+
+* Description
+  This package aims to implement the 2d phase unwrapping algorithm of
+  - Herráez, M. A., Burton, D. R., Lalor, M. J., & Gdeisat,
+    M. A. (2002). Fast two-dimensional phase-unwrapping algorithm based
+    on sorting by reliability following a noncontinuous path. Applied
+    Optics, 41(35), 7437. [[http://dx.doi.org/10.1364/ao.41.007437][DOI:10.1364/ao.41.007437]]
+
+* Usage examples
+** 1d
+   #+BEGIN_SRC julia
+     using Unwrap
+     using DSP
+
+     x = linspace(0,10,3000)*2π
+     φ = angle(exp(im*(x-8π).^2))
+
+     # Unwrap.jl, 0.000637 seconds (9.00 k allocations: 375.117 KB)
+     φφ = @time unwrap1d(φ)
+     # DSP.jl, 0.027594 seconds (133.43 k allocations: 5.674 MB, 28.79% gc time)
+     φφφ = @time unwrap(φ)
+   #+END_SRC
+   
+   [[/examples/1d.png]]
+   
+** 2d
+   #+BEGIN_SRC julia
+     using Unwrap
+
+     x = linspace(-1,1,200)
+     y = x
+     r² = broadcast(+, x.^2, (y').^2)
+     z = exp(-r²)
+     φ = angle(exp(im*z*10π))
+
+     φ_old = copy(φ)
+     φ1 = unwrap2d(φ)
+     φ2 = unwrap2d(φ1) # Iterating improves result
+   #+END_SRC
+   
+   [[/examples/2d.png]]
+
+
+* TODOs [0/4]
+ - [ ] Make 2d unwrap work in one iteration; look at [[http://read.pudn.com/downloads199/sourcecode/graph/texture_mapping/938065/phase%20unwraping/Miguel_2D_unwrapper.cpp__.htm][this working
+   implementation]].
+ - [ ] Implement variations, such as
+   - Aguemoune, S., Hocine, F., Aissa, A. B., & Ayadi, A. (2014). 2-D
+     phase unwrapping algorithm based on pseudocorrelation quality
+     map. Journal of Image and Graphics, 2(2), 94–99.
+     [[http://dx.doi.org/10.12720/joig.2.2.94-99][10.12720/joig.2.2.94-99]]
+
+ - [ ] Test pathological examples, e.g.
+   
+   [[/examples/pathological.png]]
+   
+ - [ ] Test stability against noise.
+
+ Patches welcome!

@@ -142,7 +142,7 @@ function join_groups!(c, φ, groups, group_map, shifts)
             shifts[g1[t,:]...] += ds
         end
         groups[g[2]] = [groups[g[2]]; g1]
-        groups[g[1]] = Matrix{Int}()
+        groups[g[1]] = Matrix{Int}(0,0)
     end
 end
 

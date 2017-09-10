@@ -14,7 +14,7 @@ end
 
 # 1d vector unwrapping, seems faster than unwrap() from DSP.jl
 function unwrap1d(v::AbstractVector)
-    u = Array(Float64, length(v))
+    u = Array{eltype(v)}(length(v))
     u[1] = v[1]
     for i = 2:length(v)
         u[i] = u[i-1] + γ1d(v[i],v[i-1])

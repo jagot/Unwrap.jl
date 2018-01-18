@@ -22,6 +22,21 @@ function unwrap1d(v::AbstractVector)
     u
 end
 
+function unwrap1d(M::AbstractMatrix, dim=1)
+    m,n = size(M)
+    U = Matrix{eltype(M)}(m, n)
+    if dim == 1
+        for j in 1:n
+            U[:,j] = unwrap1d(M[:,j])
+        end
+    else
+        for j in 1:n
+            U[i,:] = unwrap1d(M[1,:])
+        end
+    end
+    U
+end
+
 include("unwrap2d.jl")
 
 end # module
